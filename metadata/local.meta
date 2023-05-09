@@ -1,10 +1,10 @@
 [app/ui]
-version = 8.0.2.1
-modtime = 1606722246.453786000
+version = 9.0.4.1
+modtime = 1683597524.406599000
 
 [app/launcher]
-version = 8.0.2.1
-modtime = 1606722246.454898000
+version = 9.0.4.1
+modtime = 1683597524.411174000
 
 [nav/default]
 version = 8.2.1
@@ -215,8 +215,8 @@ version = 8.0.2.1
 modtime = 1606777687.221094000
 
 [app/package/check_for_updates]
-version = 8.0.2.1
-modtime = 1606722246.455371000
+version = 9.0.4.1
+modtime = 1683597524.413314000
 
 [views/pii_search]
 owner = admin

@@ -1,7 +1,14 @@
 <nav search_view="search" color="#C79DD7">
-  <view name="search" default='true' />
-  <view name="datasets" />
-  <view name="reports" />
-  <view name="alerts" />
-  <view name="dashboards" />
+    <view name="pii_index_summary" default='true'/>
+    <view name="pii_investigator"/>
+    <view name="pii_model_analysis"/>
+    <view name="pii_masking_config"/>
+    <collection label="Search">
+        <view name="search"/>
+        <view name="datasets"/>
+        <view name="reports"/>
+        <view name="alerts"/>
+        <view name="dashboards"/>
+    </collection>
+
 </nav>
