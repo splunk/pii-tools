@@ -1,4 +1,4 @@
-<form theme="dark">
+<form theme="dark" version="1.1">
   <label>ML Alert Creator</label>
   <fieldset submitButton="true" autoRun="false">
     <input type="time" token="time" searchWhenChanged="true">
