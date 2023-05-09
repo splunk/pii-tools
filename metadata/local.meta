@@ -1,0 +1,283 @@
+[app/ui]
+version = 8.0.2.1
+modtime = 1606722246.453786000
+
+[app/launcher]
+version = 8.0.2.1
+modtime = 1606722246.454898000
+
+[nav/default]
+version = 8.2.1
+modtime = 1629438635.808639000
+
+[indexes/lookup_space]
+owner = admin
+version = 8.0.2.1
+modtime = 1590488455.707506000
+
+[props/address_terms]
+owner = admin
+version = 8.0.2.1
+modtime = 1590490710.347258000
+
+[props/adjectives]
+owner = admin
+version = 8.0.2.1
+modtime = 1590490816.091966000
+
+[props/adverbs]
+owner = admin
+version = 8.0.2.1
+modtime = 1590490869.716855000
+
+[props/boys_names]
+owner = admin
+version = 8.0.2.1
+modtime = 1590490919.604952000
+
+[props/girls_names]
+owner = admin
+version = 8.0.2.1
+modtime = 1590490977.467250000
+
+[props/nouns]
+owner = admin
+version = 8.0.2.1
+modtime = 1590491012.771913000
+
+[props/prepositions]
+owner = admin
+version = 8.0.2.1
+modtime = 1590491070.106271000
+
+[props/pronouns]
+owner = admin
+version = 8.0.2.1
+modtime = 1590491114.515049000
+
+[props/verbs]
+owner = admin
+version = 8.0.2.1
+modtime = 1590491229.303476000
+
+[props/nouns/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491417.240503000
+
+[props/verbs/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491463.972113000
+
+[props/adjectives/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491531.518569000
+
+[props/adverbs/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491610.677662000
+
+[props/pronouns/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491654.527960000
+
+[props/prepositions/EXTRACT-term%2Cfrequency]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491702.750206000
+
+[props/boys_names/EXTRACT-term]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491782.662707000
+
+[props/girls_names/EXTRACT-term]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491859.823086000
+
+[props/address_terms/EXTRACT-term]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491960.633534000
+
+[props/surnames/EXTRACT-term]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590491999.709561000
+
+[lookups/dictionary.csv]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = nobody
+version = 8.0.2.1
+modtime = 1591140337.396921000
+
+[transforms/dictionary]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1590494848.137022000
+
+[views/pii_index_summary]
+owner = admin
+version = 8.2.1
+modtime = 1679382308.055577000
+
+[props/address]
+owner = admin
+version = 8.0.2.1
+modtime = 1591151162.217484000
+
+[indexes/resumes]
+owner = admin
+version = 8.0.2.1
+modtime = 1591839400.591579000
+
+[props/resume]
+owner = admin
+version = 8.0.2.1
+modtime = 1591839489.773772000
+
+[macros/word_extractor]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606040898.405888000
+
+[macros/number_extractor]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1592176429.359398000
+
+[macros/number_format_extractor]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1592176505.707628000
+
+[views/pii_investigator]
+owner = admin
+version = 8.0.2.1
+modtime = 1606777756.029879000
+
+[views/pii_masking_config]
+owner = admin
+version = 8.0.2.1
+modtime = 1606010060.030812000
+
+[views/pii_model_analysis]
+owner = admin
+version = 8.2.1
+modtime = 1651646411.607269000
+
+[transforms/pii_terms]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1595497655.069894000
+
+[views/ml_alert_creator]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 8.0.2.1
+modtime = 1606777687.221094000
+
+[app/package/check_for_updates]
+version = 8.0.2.1
+modtime = 1606722246.455371000
+
+[views/pii_search]
+owner = admin
+version = 8.2.1
+modtime = 1651637329.179189000
+
+[transforms/pii_risks]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606035319.511274000
+
+[transforms/pii_rex]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606035333.122893000
+
+[macros/grammar_extractor]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606290765.065845000
+
+[lookups/verb_past_forms.csv]
+access = read : [ * ], write : [ power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606181550.110998000
+
+[transforms/verb_past_forms]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606181590.537288000
+
+[lookups/contractions.csv]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606279926.971693000
+
+[transforms/contractions]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = admin
+version = 8.0.2.1
+modtime = 1606281206.523858000
+
+[views/risk_factor_management]
+owner = admin
+version = 8.0.2.1
+modtime = 1606730911.852536000
+
+[views/pii_identification_rules]
+owner = admin
+version = 8.2.1
+modtime = 1629438570.928586000

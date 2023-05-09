@@ -1,0 +1,110 @@
+<form theme="dark">
+  <label>PII Model Analysis</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="pii_threshold" searchWhenChanged="true">
+      <label>PII Threshold</label>
+      <choice value="2">2X</choice>
+      <choice value="3">3X</choice>
+      <choice value="4">4X</choice>
+      <choice value="5">5X</choice>
+      <choice value="6">6X</choice>
+      <choice value="7">7X</choice>
+      <choice value="8">8X</choice>
+      <choice value="9">9X</choice>
+      <choice value="10">10X</choice>
+      <default>4</default>
+      <initialValue>4</initialValue>
+    </input>
+    <input type="text" token="model_name" searchWhenChanged="true">
+      <label>ML Model Name</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Terms Indicating PII</title>
+      <table>
+        <search>
+          <done>
+            <set token="lookup_calculated"></set>
+          </done>
+          <done>
+            <set token="lookup_generated"></set>
+          </done>
+          <query>| summary $model_name$
+| eval pii_class = if(like(class,"%pii"),"pii","not_pii")
+| chart max(coefficient) as coefficient over feature by pii_class
+| where pii&gt; $pii_threshold$ * not_pii
+| eval function = mvindex(split(feature,"="),0)
+| eval term = mvindex(split(feature,"="),1)
+| fields term function pii not_pii
+| outputlookup pii_terms.csv</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Percentage PII Terms By Index</title>
+      <chart>
+        <search>
+          <done>
+            <unset token="token_generated"></unset>
+          </done>
+          <query>|walklex index=* $lookup_generated$
+| table *
+| lookup pii_terms term
+| eventstats count(pii) as pii_count count by source
+| eval perc = round(((pii_count/count)*100),2)
+| timechart avg(perc) as percentage_pii_terms by index
+| foreach * [ eval &lt;&lt;FIELD&gt;&gt; = round(&lt;&lt;FIELD&gt;&gt;,2)]</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">zero</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+</form>

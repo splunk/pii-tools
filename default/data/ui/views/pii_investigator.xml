@@ -1,0 +1,175 @@
+<form theme="dark">
+  <label>PII Investigator</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="time" searchWhenChanged="true">
+      <label>Select The Time Range to Search</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="multiselect" token="indexes" searchWhenChanged="true">
+      <label>Select The Indexes to Compare</label>
+      <valuePrefix>index="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> OR </delimiter>
+      <fieldForLabel>index</fieldForLabel>
+      <fieldForValue>index</fieldForValue>
+      <search>
+        <query>| tstats count where index=* by index
+| sort index</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+      <default>pii</default>
+      <initialValue>pii</initialValue>
+    </input>
+    <input type="multiselect" token="sourcetypes" searchWhenChanged="true">
+      <label>Select Sourcetypes to Analyse</label>
+      <choice value="*">All</choice>
+      <valuePrefix>sourcetype="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> OR </delimiter>
+      <fieldForLabel>sourcetype</fieldForLabel>
+      <fieldForValue>sourcetype</fieldForValue>
+      <search>
+        <query>|tstats count where index=* by sourcetype
+| sort sourcetype</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="multiselect" token="features" searchWhenChanged="true">
+      <label>Select Features to Include</label>
+      <choice value="`word_extractor`">Dictionary Terms</choice>
+      <choice value="`number_extractor`">Numeric Terms</choice>
+      <choice value="`number_format_extractor`">Formatted Numbers</choice>
+      <delimiter>|</delimiter>
+    </input>
+    <input type="text" token="records" searchWhenChanged="true">
+      <label>Number of Records</label>
+      <default>10000</default>
+      <initialValue>10000</initialValue>
+    </input>
+    <input type="text" token="model_name" searchWhenChanged="true">
+      <label>ML Model Name</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>|makeresults
+| eval Action = "Click to Use These Settings in Production"
+| table Action</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="height">50</option>
+        <drilldown>
+          <link target="_blank">/app/pii/ml_alert_creator?form.time.earliest=$time.earliest$&amp;form.time.latest=$time.latest$&amp;form.sourcetypes=$sourcetypes$&amp;form.features=$features$&amp;form.records=$records$&amp;form.model_name=$model_name$&amp;form.indexes=$indexes$</link>
+        </drilldown>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Extracted PII Features</title>
+      <table>
+        <search id="dataset">
+          <query>($indexes$) ($sourcetypes$) ()| head $records$
+| eval sourcetype = if(index="pii", sourcetype + ":pii",sourcetype)
+| $features$
+| fields _raw sourcetype _time address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term two_digit three_digit four_digit five_digit six_digit seven_digit eight_digit hyphenated underscored dotted spaced
+| eval terms = mvcount(term)
+| eval hyphenated = replace(hyphenated,"\d","X")
+| eval underscored = replace(underscored,"\d","X")
+| eval dotted = replace(dotted,"\d","X")
+| eval spaced = replace(spaced,"\d","X")
+| foreach * [eval &lt;&lt;FIELD&gt;&gt;s = mvcount(&lt;&lt;FIELD&gt;&gt;)]
+| foreach * [eval 1st_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,1) , 2nd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,2) , 3rd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,3), 4th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,4), 5th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,5)]
+| fields - _raw _time
+| fields - address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term *digit
+| fillnull
+</query>
+          <done>
+            <set token="features_extracted"></set>
+          </done>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="wrap">false</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Fitting Model</title>
+      <table>
+        <search base="dataset">
+          <query>| sample ratio=0.7 $features_extracted$
+            | fit LogisticRegression fit_intercept=true "sourcetype" from "hyphenated" "underscored" "dotted" "spaced" "1st_address" "1st_adjective" "1st_adverb" "1st_noun" "1st_preposition" "1st_term" "1st_verb" "2nd_adjective" "2nd_noun" "2nd_term" "2nd_verb" "3rd_adjective" "3rd_noun" "3rd_term" "3rd_verb" "4th_adjective" "4th_noun" "4th_term" "4th_verb" "5th_adjective" "5th_noun" "5th_term" "5th_verb" "addresss" "adjectives" "adverbs" "dotteds" "eight_digits" "five_digits" "four_digits" "nouns" "prepositions" "six_digits" "sourcetypes" "terms" "termss" "three_digits" "two_digits" "verbs" into "$model_name$"</query>
+          <done>
+            <set token="fitted"></set>
+          </done>
+        </search>
+        <option name="count">5</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="wrap">false</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Testing Model</title>
+      <single>
+        <search base="dataset">
+          <query>
+            | sample ratio=0.3 $fitted$
+            | apply "$model_name$"
+            | multireport
+              [ score precision_recall_fscore_support "sourcetype" against "predicted(sourcetype)" average=weighted
+              | rename fbeta_score as f1
+              | fields f1 precision recall
+              | foreach *
+                  [ eval &lt;&lt;FIELD&gt;&gt; = round(&lt;&lt;FIELD&gt;&gt;, 2)]]
+              [ score accuracy_score "sourcetype" against "predicted(sourcetype)"
+              | eval accuracy = round(accuracy_score, 2)]
+              | table accuracy f1 precision recall
+              | stats first(*) as *</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">150</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.size">small</option>
+      </single>
+      <table>
+        <search base="dataset">
+          <query>| sample ratio=0.3 $fitted$
+| apply "$model_name$" 
+| `confusionmatrix("sourcetype","predicted(sourcetype)")` 
+| addtotals 
+| foreach Predicted* 
+    [ eval &lt;&lt;FIELD&gt;&gt; = if("&lt;&lt;FIELD&gt;&gt;"="Predicted actual",'Predicted actual',tostring(round(('&lt;&lt;FIELD&gt;&gt;'/Total *100),2))) ] 
+| fields - Total</query>
+        </search>
+        <option name="dataOverlayMode">heatmap</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

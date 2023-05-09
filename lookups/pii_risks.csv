@@ -1,0 +1,10 @@
+name,logic,risk
+"Phone Number Present","match(_raw,""(?:^|\s)(?:\+\d+\s|0)(?:\d[\s\-]?){9}(?:$|\s)"")",1
+"Firstname and Surname Present","isnotnull(dict_first_name) AND isnotnull(dict_surname)",1
+"Email Address Present","match(_raw,""[\w\.\-_]+@(?:[\w\.\-_]+\.)+\w+"")",1
+"High Accuracy GPS Location Present","match(_raw,""(?:[Ll][Aa][Tt])\s*(?:\d{1,2}\.\d{3,10}\s*[NnSs]|[-+]?\d{1,2}\.\d{3,10})\s*(?:[Ll][Oo][Nn])\s*(?:\d{1,3}\.\d{3,10}\s*[WsEe]|[-+]?\d{1,3}\.\d{3,10})|\d{1,2}\.\d{3,10}\s*[NnSs]\s*\d{1,3}\.\d{3,10}\s*[WwEe]"")",1
+"Australian Passport Number Present","match(_raw,""[ELMNPelmnp]\d{7}"")",1
+"(Grammar) Statement about an Implied Person","match(grammar,""pronoun\s(?:(?:re|m|verb)\s)"")",1
+"(Grammar) Statement about a Named Person","match(grammar,""first_name\s(?:surname\s)?verb"")",1
+"Address Elements Present","isnotnull(dict_address)",1
+"Medical Terms Present","isnotnull(dict_medical)",1

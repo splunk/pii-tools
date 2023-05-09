@@ -1,0 +1,8 @@
+logic,name,risk
+"match(_raw,""(?:^|\s)(?:\+\d+\s|0)(?:\d[\s\-]?){9}(?:$|\s)"")","Phone Number Present",1
+"isnotnull(dict_first_name) AND isnotnull(dict_surname)","Firstname and Surname Present",1
+"match(_raw,""[\w\.\-_]+@(?:[\w\.\-_]+\.)+\w+"")","Email Address Present",1
+"match(_raw,""(?:[Ll][Aa][Tt])\s*(?:\d{1,2}\.\d{3,10}\s*[NnSs]|[-+]?\d{1,2}\.\d{3,10})\s*(?:[Ll][Oo][Nn])\s*(?:\d{1,3}\.\d{3,10}\s*[WsEe]|[-+]?\d{1,3}\.\d{3,10})|\d{1,2}\.\d{3,10}\s*[NnSs]\s*\d{1,3}\.\d{3,10}\s*[WwEe]"")","High Accuracy GPS Location Present",1
+"match(_raw,""[ELMNPelmnp]\d{7}"")","Australian Passport Number Present",1
+"match(grammar,""pronoun\s(?:(?:re|m|verb)\s)"")","(Grammar) Statement about an Implied Person",1
+"match(grammar,""first_name\s(?:surname\s)?verb"")","(Grammar) Statement about a Named Person",1

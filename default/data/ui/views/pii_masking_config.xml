@@ -1,0 +1,132 @@
+<form theme="dark">
+  <label>PII Masking Config</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="sourcetype" searchWhenChanged="true">
+      <label>Select Sourcetype to Screen</label>
+      <fieldForLabel>sourcetype</fieldForLabel>
+      <fieldForValue>sourcetype</fieldForValue>
+      <search>
+        <query>|tstats count where index=* by sourcetype
+| sort sourcetype</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+    </input>
+    <input type="text" token="regex">
+      <label>Custom Regex if required</label>
+    </input>
+    <input type="dropdown" token="pii" searchWhenChanged="true">
+      <label>Known PII Types</label>
+      <choice value="">Select PII Type</choice>
+      <choice value="custom">custom</choice>
+      <choice value="(?:^|\s)(?:\+\d+\s|0)(?:\d[\s\-]?){9}(?:$|\s)">Phone Number</choice>
+      <choice value="[\w\.\-_]+@(?:[\w\.\-_]+\.)+\w+">Email Address</choice>
+      <choice value="(?:^|[^0-9a-fA-f])([0-9a-fA-F]{32})(?:$|[^0-9a-fA-f])">MD5 Identifier</choice>
+      <change>
+        <condition value="custom">
+          <set token="pii">$regex$</set>
+        </condition>
+      </change>
+      <default></default>
+    </input>
+    <input type="radio" token="action">
+      <label>Action to Take</label>
+      <choice value="">Select Action Below</choice>
+      <choice value="Block_Event">Block Event</choice>
+      <choice value="Remove_Pii">Remove Pii</choice>
+      <choice value="Mask_Pii">Mask Pii</choice>
+      <choice value="Hash_Pii">Hash Pii</choice>
+      <change>
+        <condition label="Block Event">
+          <set token="props1">TRANSFORMS-null$sourcetype$= setnull$sourcetype$</set>
+          <set token="transforms1">[setnull$sourcetype$]</set>
+          <set token="transforms2">REGEX = $pii$</set>
+          <set token="transforms2end"></set>
+          <set token="transforms3">DEST_KEY = queue</set>
+          <set token="transforms4">FORMAT = nullQueue</set>
+        </condition>
+        <condition label="Remove Pii">
+          <set token="props1">SEDCMD-$action$ = s/$pii$//g</set>
+          <set token="transforms1"></set>
+          <set token="transforms2"></set>
+          <set token="transforms2end"></set>
+          <set token="transforms3"></set>
+          <set token="transforms4"></set>
+        </condition>
+        <condition label="Mask Pii">
+          <set token="props1">SEDCMD-$action$ = s/$pii$/XXXXXXXXXX/g</set>
+          <set token="transforms1"></set>
+          <set token="transforms2"></set>
+          <set token="transforms2end"></set>
+          <set token="transforms3"></set>
+          <set token="transforms4"></set>
+        </condition>
+        <condition label="Hash Pii">
+          <set token="props1">TRANSFORMS-$action$= pii_eval_$sourcetype$</set>
+          <set token="transforms1">[pii_eval_$sourcetype$]</set>
+          <set token="transforms2">INGEST_EVAL = _raw=replace(_raw, "$pii$", " "</set>
+          <set token="transforms2end">+ md5(replace(_raw, ".+?($pii$)","\1")) + " ")</set>
+          <set token="transforms3"></set>
+          <set token="transforms4"></set>
+        </condition>
+        <condition label="none">
+          <set token="props1"></set>
+          <set token="transforms1"></set>
+          <set token="transforms2"></set>
+          <set token="transforms2end"></set>
+          <set token="transforms3"></set>
+          <set token="transforms4"></set>
+        </condition>
+      </change>
+      <default></default>
+    </input>
+  </fieldset>
+  <row>
+    <panel depends="$props1$">
+      <title>props.conf</title>
+      <html>
+        <h3>
+          [$sourcetype$] <br/>
+          $props1$ <br/>
+        </h3>
+      </html>
+    </panel>
+    <panel depends="$transforms1$">
+      <title>transforms.conf</title>
+      <html>
+        <h3>
+          $transforms1$ <br/>
+          $transforms2$$transforms2end$<br/>
+          $transforms3$ <br/>
+          $transforms4$ <br/>
+        </h3>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Matching Events</title>
+      <event>
+        <search>
+          <query>index=* sourcetype=$sourcetype$
+| where match(_raw,"$pii$")
+| head 10</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="list.drilldown">none</option>
+        <option name="list.wrap">1</option>
+        <option name="maxLines">5</option>
+        <option name="raw.drilldown">full</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">0</option>
+        <option name="table.drilldown">all</option>
+        <option name="table.sortDirection">asc</option>
+        <option name="table.wrap">1</option>
+        <option name="type">list</option>
+      </event>
+    </panel>
+  </row>
+</form>
