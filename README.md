@@ -13,6 +13,8 @@ TODO - need to work with Matthew to produce this
 ## Package
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
 ```
+# Make sure to remove all local files first!
+# E.g. metadata/local.meta
 ./splunk package app pii-tools
 ```
 
