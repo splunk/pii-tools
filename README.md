@@ -12,6 +12,19 @@ TODO - need to work with Matthew to produce this
 
 ## Package
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
+```
+./splunk package app pii-tools
+```
 
 ## App Vetting
 https://dev.splunk.com/enterprise/docs/releaseapps/cloudvetting
+
+## Code Snippets
+### Symbolic Link - Splunk Enterprise
+```
+ln -s path/to/pii-tools/app /Applications/Splunk/etc/apps/pii-tools
+```
+### Remove `local.meta` files
+```
+find . -name 'local.meta' | xargs rm
+```
