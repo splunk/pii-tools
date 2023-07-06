@@ -42,7 +42,7 @@
       <delimiter>|</delimiter>
     </input>
     <input type="text" token="records" searchWhenChanged="true">
-      <label>Number of Records</label>
+      <label>Number of Records for Training</label>
       <default>10000</default>
       <initialValue>10000</initialValue>
     </input>
@@ -61,6 +61,7 @@
           <query>(index=*) ($sourcetypes$) ()| head $records$
 | eval sourcetype = if(index="pii", sourcetype + ":pii",sourcetype)
 | $features$
+| rename dict_* as *
 | fields _raw sourcetype _time address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term two_digit three_digit four_digit five_digit six_digit seven_digit eight_digit hyphenated underscored dotted spaced
 | eval terms = mvcount(term)
 | eval hyphenated = replace(hyphenated,"\d","X")
@@ -74,8 +75,8 @@
 | fillnull
             | sample ratio=1 
             | fit LogisticRegression fit_intercept=true "sourcetype" from "hyphenated" "underscored" "dotted" "spaced" "1st_address" "1st_adjective" "1st_adverb" "1st_noun" "1st_preposition" "1st_term" "1st_verb" "2nd_adjective" "2nd_noun" "2nd_term" "2nd_verb" "3rd_adjective" "3rd_noun" "3rd_term" "3rd_verb" "4th_adjective" "4th_noun" "4th_term" "4th_verb" "5th_adjective" "5th_noun" "5th_term" "5th_verb" "addresss" "adjectives" "adverbs" "dotteds" "eight_digits" "five_digits" "four_digits" "nouns" "prepositions" "six_digits" "sourcetypes" "terms" "termss" "three_digits" "two_digits" "verbs" into "$model_name$"</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
         </search>
         <option name="count">5</option>
         <option name="drilldown">none</option>
@@ -86,13 +87,14 @@
   </row>
   <row>
     <panel>
-      <title>Testing Model</title>
+      <title>Alerting Search</title>
       <table>
+        <title>This search deliberately excludes the PII index housing training data.  Results shown are either PII or False Positives.</title>
         <search>
           <query>($indexes$) ($sourcetypes$) () NOT index=pii 
-| eval sourcetype = if(index="pii", sourcetype + ":pii",sourcetype)
 | $features$
-| fields _raw sourcetype _time index address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term two_digit three_digit four_digit five_digit six_digit seven_digit eight_digit hyphenated underscored dotted spaced
+| rename dict_* as *
+| fields _raw index sourcetype _time address adjective adverb first_name noun preposition pronoun surname verb term two_digit three_digit four_digit five_digit six_digit seven_digit eight_digit hyphenated underscored dotted spaced
 | eval terms = mvcount(term)
 | eval hyphenated = replace(hyphenated,"\d","X")
 | eval underscored = replace(underscored,"\d","X")
@@ -100,14 +102,14 @@
 | eval spaced = replace(spaced,"\d","X")
 | foreach * [eval &lt;&lt;FIELD&gt;&gt;s = mvcount(&lt;&lt;FIELD&gt;&gt;)]
 | foreach * [eval 1st_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,1) , 2nd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,2) , 3rd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,3), 4th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,4), 5th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,5)]
-| fields - address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term *digit
-| fillnull
+| fields - address adjective adverb first_name noun preposition pronoun surname verb term *digit
+| fillnull 
 | apply "$model_name$"
-| rename "predicted(sourcetype)" as predicted
+| rename "predicted(sourcetype)" as predicted 
 | search predicted=*pii
-| fields  _time sourcetype index _raw</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
+| table _time index sourcetype _raw</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
         </search>
         <option name="dataOverlayMode">heatmap</option>
         <option name="drilldown">none</option>

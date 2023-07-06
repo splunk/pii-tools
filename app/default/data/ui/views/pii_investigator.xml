@@ -1,11 +1,11 @@
 <form theme="dark" version="1.1">
-  <label>PII Investigator</label>
+  <label>PII Analytics</label>
   <fieldset submitButton="true" autoRun="false">
     <input type="time" token="time" searchWhenChanged="true">
       <label>Select The Time Range to Search</label>
       <default>
-        <earliest>-24h@h</earliest>
-        <latest>now</latest>
+        <earliest>0</earliest>
+        <latest></latest>
       </default>
     </input>
     <input type="multiselect" token="indexes" searchWhenChanged="true">
@@ -38,7 +38,6 @@
         <earliest>$time.earliest$</earliest>
         <latest>$time.latest$</latest>
       </search>
-      <initialValue>*</initialValue>
     </input>
     <input type="multiselect" token="features" searchWhenChanged="true">
       <label>Select Features to Include</label>
@@ -82,9 +81,13 @@
       <title>Extracted PII Features</title>
       <table>
         <search id="dataset">
+          <done>
+            <set token="features_extracted"></set>
+          </done>
           <query>($indexes$) ($sourcetypes$) ()| head $records$
 | eval sourcetype = if(index="pii", sourcetype + ":pii",sourcetype)
 | $features$
+| rename dict_* as *
 | fields _raw sourcetype _time address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term two_digit three_digit four_digit five_digit six_digit seven_digit eight_digit hyphenated underscored dotted spaced
 | eval terms = mvcount(term)
 | eval hyphenated = replace(hyphenated,"\d","X")
@@ -95,11 +98,7 @@
 | foreach * [eval 1st_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,1) , 2nd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,2) , 3rd_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,3), 4th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,4), 5th_&lt;&lt;FIELD&gt;&gt; = mvindex(&lt;&lt;FIELD&gt;&gt;,5)]
 | fields - _raw _time
 | fields - address	adjective	adverb	first_name	noun	preposition	pronoun	surname	verb term *digit
-| fillnull
-</query>
-          <done>
-            <set token="features_extracted"></set>
-          </done>
+| fillnull</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -166,9 +165,12 @@
     [ eval &lt;&lt;FIELD&gt;&gt; = if("&lt;&lt;FIELD&gt;&gt;"="Predicted actual",'Predicted actual',tostring(round(('&lt;&lt;FIELD&gt;&gt;'/Total *100),2))) ] 
 | fields - Total</query>
         </search>
-        <option name="dataOverlayMode">heatmap</option>
+        <option name="dataOverlayMode">none</option>
         <option name="drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
+        <format type="color">
+          <colorPalette type="minMidMax" maxColor="#006D9C" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax" maxValue="100" minValue="0"></scale>
+        </format>
       </table>
     </panel>
   </row>

@@ -1,0 +1,44 @@
+<form version="1.1">
+  <label>Risk Factor Management</label>
+  <fieldset submitButton="true">
+    <input type="text" token="name">
+      <label>Name</label>
+    </input>
+    <input type="text" token="logic">
+      <label>Logic</label>
+    </input>
+    <input type="text" token="risk_score">
+      <label>Risk Score</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Updated Lookup</title>
+      <table>
+        <search>
+          <query>| inputlookup pii_risks 
+| append 
+    [| makeresults 
+    | eval logic = "$logic$"
+    | eval name = "$name$"
+    | eval risk = $risk_score$
+    | fields - _time]
+        | dedup name logic risk
+        | fields name logic risk
+        | outputlookup pii_risks</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>

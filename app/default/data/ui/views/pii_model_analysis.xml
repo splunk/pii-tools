@@ -1,5 +1,5 @@
 <form theme="dark" version="1.1">
-  <label>PII Model Analysis</label>
+  <label>PII Model Inspection</label>
   <fieldset submitButton="false">
     <input type="dropdown" token="pii_threshold" searchWhenChanged="true">
       <label>PII Threshold</label>
@@ -69,7 +69,7 @@
 | timechart avg(perc) as percentage_pii_terms by index
 | foreach * [ eval &lt;&lt;FIELD&gt;&gt; = round(&lt;&lt;FIELD&gt;&gt;,2)]</query>
           <earliest>0</earliest>
-          <latest></latest>
+          <latest>1601474400</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>

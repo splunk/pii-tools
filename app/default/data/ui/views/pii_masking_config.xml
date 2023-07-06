@@ -19,15 +19,17 @@
       <label>Known PII Types</label>
       <choice value="">Select PII Type</choice>
       <choice value="custom">custom</choice>
-      <choice value="(?:^|\s)(?:\+\d+\s|0)(?:\d[\s\-]?){9}(?:$|\s)">Phone Number</choice>
-      <choice value="[\w\.\-_]+@(?:[\w\.\-_]+\.)+\w+">Email Address</choice>
-      <choice value="(?:^|[^0-9a-fA-f])([0-9a-fA-F]{32})(?:$|[^0-9a-fA-f])">MD5 Identifier</choice>
       <change>
         <condition value="custom">
           <set token="pii">$regex$</set>
         </condition>
       </change>
       <default></default>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>regex</fieldForValue>
+      <search>
+        <query>| inputlookup pii_rex</query>
+      </search>
     </input>
     <input type="radio" token="action">
       <label>Action to Take</label>

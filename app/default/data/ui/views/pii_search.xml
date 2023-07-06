@@ -1,0 +1,120 @@
+<form version="1.1">
+  <label>PII Search</label>
+  <search id="events">
+    <query>($indexes$) ($sourcetypes$) ()| head $records$
+            | $features$</query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+    <sampleRatio>1</sampleRatio>
+  </search>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="time" token="time" searchWhenChanged="true">
+      <label>Select The Time Range to Search</label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="multiselect" token="indexes" searchWhenChanged="true">
+      <label>Select The Indexes to Compare</label>
+      <valuePrefix>index="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> OR </delimiter>
+      <fieldForLabel>index</fieldForLabel>
+      <fieldForValue>index</fieldForValue>
+      <search>
+        <query>| tstats count where index=* by index
+| sort index</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+      <default>main</default>
+      <initialValue>main</initialValue>
+    </input>
+    <input type="multiselect" token="sourcetypes" searchWhenChanged="true">
+      <label>Select Sourcetypes to Analyse</label>
+      <choice value="*">All</choice>
+      <valuePrefix>sourcetype="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> OR </delimiter>
+      <fieldForLabel>sourcetype</fieldForLabel>
+      <fieldForValue>sourcetype</fieldForValue>
+      <search>
+        <query>|tstats count where $indexes$ by sourcetype
+| sort sourcetype</query>
+        <earliest>$time.earliest$</earliest>
+        <latest>$time.latest$</latest>
+      </search>
+    </input>
+    <input type="multiselect" token="features" searchWhenChanged="true">
+      <label>Select Features to Include</label>
+      <choice value="`word_extractor`">Dictionary Terms</choice>
+      <choice value="`number_extractor`">Numeric Terms</choice>
+      <choice value="`number_format_extractor`">Formatted Numbers</choice>
+      <choice value="`grammar_extractor`">Grammatical Elements</choice>
+      <delimiter>|</delimiter>
+    </input>
+    <input type="text" token="records" searchWhenChanged="true">
+      <label>Number of Records</label>
+      <default>10000</default>
+      <initialValue>10000</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Matching Events</title>
+      <input type="multiselect" token="risk_terms" searchWhenChanged="true">
+        <label>High Risk Fields</label>
+        <delimiter> | </delimiter>
+        <fieldForLabel>name</fieldForLabel>
+        <fieldForValue>logic</fieldForValue>
+        <search>
+          <query>|inputlookup pii_risks
+| eval logic= "eval risk_score=if(isnotnull(risk_score),risk_score,0) + if(" + logic +", " + risk +",0)"</query>
+        </search>
+        <choice value="eval dummy_field = null()">None</choice>
+      </input>
+      <input type="text" token="risk_threshold" searchWhenChanged="true">
+        <label>Risk Threshold</label>
+        <default>1</default>
+        <initialValue>1</initialValue>
+      </input>
+      <input type="multiselect" token="display_fields" searchWhenChanged="true">
+        <label>Display Fields</label>
+        <choice value="risk_score">Risk Score</choice>
+        <choice value="_raw">Raw Events</choice>
+        <choice value="grammar">Grammar Analysis</choice>
+        <choice value="dict_first_name dict_surname">names</choice>
+        <default>risk_score,_raw</default>
+        <delimiter> </delimiter>
+      </input>
+      <table>
+        <search base="events">
+          <query>| $risk_terms$
+| where risk_score&gt;=$risk_threshold$
+| table $display_fields$
+| sort - risk_score</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$alwaysHideCSS$">
+      <html>
+         <style>
+
+                      .dashboard-panel h2{
+            background:#008080 !important;
+            color:white !important;
+            text-align: center !important;
+            font-weight: bold !important;
+            border-top-right-radius: 15px;
+            border-top-left-radius: 15px;
+          }
+         </style>
+       </html>
+    </panel>
+  </row>
+</form>

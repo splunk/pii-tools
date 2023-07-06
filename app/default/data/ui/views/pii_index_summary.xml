@@ -1,28 +1,162 @@
 <form version="1.1">
-  <label>Dictionary Term by Index Summary</label>
+  <label>Index Vocabulary</label>
+  <init>
+    <set token="index">main</set>
+    <set token="word_category">verb</set>
+  </init>
   <fieldset submitButton="false">
     <input type="time" token="time" searchWhenChanged="true">
       <label>Select Time Range</label>
       <default>
-        <earliest>-24h@h</earliest>
-        <latest>now</latest>
+        <earliest>1588255200</earliest>
+        <latest>1606827600</latest>
       </default>
     </input>
   </fieldset>
+  <row>
+    <panel id="legend">
+      <title>Legend</title>
+      <table>
+        <search>
+          <query>| inputlookup dictionary
+| fields dict*
+| rename dict_* as *
+| transpose
+| fields column
+| rename column as " "
+| where NOT (Legend="index" OR Legend="_time")</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="Series">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color" field="Legend">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <format type="color">
+          <colorPalette type="sharedList"></colorPalette>
+          <scale type="sharedCategory"></scale>
+        </format>
+        <drilldown>
+          <set token="word_category">$click.value$</set>
+          <set token="index">*</set>
+        </drilldown>
+      </table>
+    </panel>
+    <panel id="vocab">
+      <title>Index Vocabulary</title>
+      <chart>
+        <search>
+          <query>|walklex index=*
+| search NOT index=lookup*
+| where match(term,"^[a-zA-Z]+$")
+| timechart values(term) as term by index
+| untable _time index term
+| rex mode=sed field=term "s/[\r\n]/|||/g"
+| eval term=split(term,"|||")
+| lookup dictionary term
+| fields dict* _time index
+| rename dict_* as *
+| fields - term
+| stats dc(*) as * by index _time
+| sort index _time</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
+        <option name="charting.axisTitleY2.visibility">collapsed</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked100</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="height">440</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">1</option>
+        <option name="trellis.scales.shared">0</option>
+        <option name="trellis.size">medium</option>
+        <drilldown>
+          <set token="word_category">$click.name2$</set>
+          <set token="index">$trellis.value$</set>
+        </drilldown>
+      </chart>
+    </panel>
+    <panel id="words">
+      <title>$word_category$ Vocabulary for Index $index$</title>
+      <table>
+        <search>
+          <query>| walklex index="$index$" 
+| where match(term,"^[a-zA-Z]+$$")
+| lookup dictionary term
+| rename dict_* as *
+| stats count by $word_category$
+| sort - count</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="count">
+          <colorPalette type="minMidMax" maxColor="#B6C75A" minColor="#708794"></colorPalette>
+          <scale type="minMidMax"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
   <row>
     <panel>
       <title>Word Class, Percentage by Index</title>
       <table>
         <search>
-          <query>|walklex index=*
+          <query>| walklex index=*
 | search NOT index=lookup*
-| where match(term,"^\w+$")
+| where match(term,"^[a-zA-Z]+$")
 | lookup dictionary term
 | fields - term source splunk_server count
 | stats sparkline count count(*) as * by index
 | rename count as _count index as _index sparkline as _sparkline
-| foreach * [eval &lt;&lt;FIELD&gt;&gt; = round((&lt;&lt;FIELD&gt;&gt;/_count)*100,2)]
-| rename _index as index _sparkline as sparkline</query>
+| foreach * [eval &lt;&lt;FIELD&gt;&gt; = tostring(round((&lt;&lt;FIELD&gt;&gt;/_count)*100,2))]
+| rename _index as index _sparkline as sparkline dict_* as *</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -35,104 +169,39 @@
         <option name="rowNumbers">false</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
+        <format type="color">
+          <colorPalette type="minMidMax" maxColor="#006D9C" minColor="#FFFFFF"></colorPalette>
+          <scale type="minMidMax"></scale>
+        </format>
+        <format type="number">
+          <option name="unit">%</option>
+        </format>
       </table>
     </panel>
   </row>
   <row>
-    <panel>
-      <chart>
-        <search>
-          <query>|walklex index=*
-| search NOT index=lookup*
-| where match(term,"^[a-zA-Z]+$$")
-| lookup dictionary term
-| top 20 term by index</query>
-          <earliest>$time.earliest$</earliest>
-          <latest>$time.latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">-45</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.abbreviation">none</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.abbreviation">none</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">column</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">none</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">right</option>
-        <option name="charting.lineWidth">2</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="trellis.enabled">1</option>
-        <option name="trellis.scales.shared">1</option>
-        <option name="trellis.size">large</option>
-      </chart>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>Rare terms by Index</title>
-      <chart>
-        <search>
-          <query>|walklex index=*
-| search NOT index=lookup*
-| where match(term,"^[a-zA-Z]+$$")
-| lookup dictionary term
-| rare 20 term by index</query>
-          <earliest>$time.earliest$</earliest>
-          <latest>$time.latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">-45</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.abbreviation">none</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.abbreviation">none</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.abbreviation">none</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">column</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">none</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.mode">standard</option>
-        <option name="charting.legend.placement">right</option>
-        <option name="charting.lineWidth">2</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="trellis.enabled">1</option>
-        <option name="trellis.scales.shared">1</option>
-        <option name="trellis.size">large</option>
-      </chart>
+    <panel depends="$alwaysHideCSS$">
+      <html>
+         <style>
+           #legend{
+             width:10% !important;
+            }
+           #words{
+             width:30% !important;
+           }
+          #vocab{
+             width:60% !important;
+           }
+                      .dashboard-panel h2{
+            background:#008080 !important;
+            color:white !important;
+            text-align: center !important;
+            font-weight: bold !important;
+            border-top-right-radius: 15px;
+            border-top-left-radius: 15px;
+          }
+         </style>
+       </html>
     </panel>
   </row>
 </form>
