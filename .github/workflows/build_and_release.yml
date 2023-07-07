@@ -28,7 +28,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo 'Hello' > hello.txt
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: PWD
+        run: pwd
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
         with:
-          files: hello.txt
+          name: artifact
+          path: hello.txt
