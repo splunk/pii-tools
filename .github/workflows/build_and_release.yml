@@ -38,9 +38,9 @@ jobs:
       - name: List dir
         run: ls -lh
       - name: Get filename of app package
-        run: package_filename=$(echo pii_tools*.tar.gz)
+        run: echo "package_filename=$(echo pii_tools*.tar.gz)" >> "$GITHUB_ENV"
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $package_filename
-          path: $package_filename
+          name: "${{ env.package_filename }}"
+          path: "${{ env.package_filename }}"
