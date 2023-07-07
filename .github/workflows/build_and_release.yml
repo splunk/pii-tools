@@ -37,8 +37,10 @@ jobs:
         run: slim package $GITHUB_WORKSPACE/pii_tools
       - name: List dir
         run: ls -lh
+      - name: Get filename of app package
+        run: package_filename=$(echo pii_tools*.tar.gz)
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: pii_tools.tar.gz
-          path: pii_tools*.tar.gz
+          name: $package_filename
+          path: $package_filename
