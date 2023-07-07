@@ -24,14 +24,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v3.1.4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo 'Hello' > hello.txt
-      - name: PWD
-        run: pwd
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: artifact
-          path: hello.txt
+      - name: Download SLIM
+        run: wget 'https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.1.tar.gz'
+      - name: List dir
+        run: ls -lh
+#       - name: Upload Artifact
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: artifact
+#           path: hello.txt
