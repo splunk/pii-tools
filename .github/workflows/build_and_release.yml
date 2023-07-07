@@ -37,8 +37,8 @@ jobs:
         run: slim package $GITHUB_WORKSPACE/pii_tools
       - name: List dir
         run: ls -lh
-#       - name: Upload Artifact
-#         uses: actions/upload-artifact@v3
-#         with:
-#           name: artifact
-#           path: hello.txt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pii_tools.tar.gz
+          path: pii_tools*.tar.gz
