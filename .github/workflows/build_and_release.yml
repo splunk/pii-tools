@@ -34,7 +34,7 @@ jobs:
       - name: Install SPT
         run: pip install spt.tar.gz
       - name: SLIM Package App
-        run: slim package $GITHUB_WORKSPACE/app
+        run: slim package $GITHUB_WORKSPACE/pii_tools
       - name: List dir
         run: ls -lh
 #       - name: Upload Artifact
