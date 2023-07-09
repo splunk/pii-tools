@@ -10,6 +10,11 @@ We aim to publish this on Splunkbase (eventually).
 ## Documentation
 TODO - need to work with Matthew to produce this
 
+## Dependencies
+Some of the machine learning functionality require:
+- Python for Scientific Computing
+- Splunk Machine Learning Toolkit
+
 ## Package
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
 ```
