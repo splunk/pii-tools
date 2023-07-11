@@ -6,9 +6,7 @@ Splunk App which provides tools to detect and handle PII.
 This app was created by Matthew Moore.
 FDSE team has been involved with helping make this app production-ready.
 We aim to publish this on Splunkbase (eventually).
-
-## Documentation
-TODO - need to work with Matthew to produce this
+Note: This documentation is a WIP.
 
 ## Dependencies
 Some of the machine learning functionality requires these apps:
