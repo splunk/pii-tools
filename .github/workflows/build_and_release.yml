@@ -45,6 +45,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: "entire_dir"
+          name: "pii_tools_tar_inside_${{github.sha}}.zip"
           path: out/
 #           path: "${{ env.package_filename }}"
