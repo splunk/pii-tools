@@ -10,8 +10,8 @@ Note: This documentation is a WIP.
 
 ## Dependencies
 Some of the machine learning functionality requires these apps:
-- Python for Scientific Computing (whichever variant suits your OS)
-- Splunk Machine Learning Toolkit
+- Python for Scientific Computing: see https://github.com/splunk/Splunk-python-for-scientific-computing
+- Splunk Machine Learning Toolkit: https://splunkbase.splunk.com/app/2890
 
 ## Setup
 - Install this app: get the latest build by going to Actions > Build and Release > Click latest main workflow > Artifacts
