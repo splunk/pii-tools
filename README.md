@@ -18,7 +18,9 @@ Some of the machine learning functionality requires these apps:
 ## Setup
 - Install this app
 - MLTK: the `confusionmatrix(2)` macro sharing needs to be set to Global.
-
+## About Dashboards
+### PII Analytics
+- The input field 'ML Model Name' is user-provided. The SPL will generate a ML model with this name, which is stored as a lookup table file.
 ## Package
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
 ```
