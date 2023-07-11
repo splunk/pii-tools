@@ -33,18 +33,16 @@ jobs:
         run: wget -O spt.tar.gz 'https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-1.0.1.tar.gz'
       - name: Install SPT
         run: pip install spt.tar.gz
-      - name: Make artifacts dir
-        run: mkdir out
       - name: SLIM Package App
         run: slim package $GITHUB_WORKSPACE/pii_tools
-        working-directory: out/
+      - name: Rename app package
+        run: rename "s/^pii_tools/pii_tools_${{github.sha}}/" pii_tools*.tar.gz
       - name: List dir
-        run: ls -lh; ls -lh out
-#       - name: Get filename of app package
-#         run: echo "package_filename=$(echo pii_tools*.tar.gz)" >> "$GITHUB_ENV"
+        run: ls -lh
+        
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: "pii_tools_tar_inside_${{github.sha}}.zip"
-          path: out/
+          path: pii_tools*.gz
 #           path: "${{ env.package_filename }}"
