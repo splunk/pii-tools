@@ -36,7 +36,7 @@ jobs:
       - name: SLIM Package App
         run: slim package $GITHUB_WORKSPACE/pii_tools
       - name: Rename app package
-        run: for filename in pii_tools*.gz; do mv "$filename" "${{github.sha}}-${filename}"; done;
+        run: for filename in pii_tools*.gz; do mv "$filename" "${filename}-${{github.sha}}.tar.gz"; done;
       - name: List dir
         run: ls -lh
         
