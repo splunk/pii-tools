@@ -20,9 +20,10 @@ Some of the machine learning functionality requires these apps:
 ### PII Analytics
 - The input field 'ML Model Name' is user-provided. The SPL will generate a ML model with this name, which is stored as a lookup table file.
 ## Package
+
 Use SLIM instead...
 https://dev.splunk.com/enterprise/reference/packagingtoolkit/packagingtoolkitcli/#slim-package
----
+
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
 ```
 # Make sure to remove all local files first!
