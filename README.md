@@ -14,7 +14,7 @@ Some of the machine learning functionality requires these apps:
 - Splunk Machine Learning Toolkit
 
 ## Setup
-- Install this app
+- Install this app: get the latest build by going to Actions > Build and Release > Click latest main workflow > Artifacts
 - MLTK: the `confusionmatrix(2)` macro sharing needs to be set to Global.
 ## About Dashboards
 ### PII Analytics
