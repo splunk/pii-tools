@@ -34,16 +34,17 @@ jobs:
       - name: Install SPT
         run: pip install spt.tar.gz
       - name: Make artifacts dir
-        run: mkdir out && cd out
+        run: mkdir out
       - name: SLIM Package App
         run: slim package $GITHUB_WORKSPACE/pii_tools
+        working-directory: out/
       - name: List dir
-        run: ls -lh
-      - name: Get filename of app package
-        run: echo "package_filename=$(echo pii_tools*.tar.gz)" >> "$GITHUB_ENV"
+        run: ls -lh; ls -lh out
+#       - name: Get filename of app package
+#         run: echo "package_filename=$(echo pii_tools*.tar.gz)" >> "$GITHUB_ENV"
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: "entire_dir"
-          path: ./
+          path: out/
 #           path: "${{ env.package_filename }}"
