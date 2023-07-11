@@ -11,9 +11,13 @@ We aim to publish this on Splunkbase (eventually).
 TODO - need to work with Matthew to produce this
 
 ## Dependencies
-Some of the machine learning functionality require:
-- Python for Scientific Computing
+Some of the machine learning functionality requires these apps:
+- Python for Scientific Computing (whichever variant suits your OS)
 - Splunk Machine Learning Toolkit
+
+## Setup
+- Install this app
+- MLTK: the `confusionmatrix(2)` macro sharing needs to be set to Global.
 
 ## Package
 https://dev.splunk.com/enterprise/docs/releaseapps/packageapps/
