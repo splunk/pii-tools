@@ -4,6 +4,9 @@ Splunk App which provides tools to detect and handle PII.
 
 ## Background
 This app was created by Matthew Moore.
+
+There's a write-up about this app based on the .conf talk here: https://lantern.splunk.com/Splunk_Platform/Use_Cases/Use_Cases_Security/Compliance/Defining_and_detecting_Personally_Identifiable_Information_(PII)_in_log_data
+
 FDSE team has been involved with helping make this app production-ready.
 We aim to publish this on Splunkbase (eventually).
 Note: This documentation is a WIP.
