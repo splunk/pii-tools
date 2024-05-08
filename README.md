@@ -3,15 +3,14 @@
 ## Download
 Latest version: https://github.com/splunk/pii-tools/releases/download/v0.0.1/pii_tools-0.0.1.tar.gz
 
-## What is this
-Splunk App which provides tools to detect and handle PII.
-
 ## Background
-This app was created by Matthew Moore.
+This Splunk App provides tools to detect and handle PII.
+
+This app was created by Matthew Moore, and with the help of the FDSE team has been made Splunk Cloud compatible.
 
 There's a write-up about this app based on the .conf talk here: https://lantern.splunk.com/Splunk_Platform/Use_Cases/Use_Cases_Security/Compliance/Defining_and_detecting_Personally_Identifiable_Information_(PII)_in_log_data
 
-FDSE team has been involved with helping make this app Splunk Cloud compatible.
+And a talk by Matthew from .conf 2022 explain the app: https://conf.splunk.com/files/2022/recordings/SEC1418C_1080.mp4
 
 ## Setup
 [Download](#download) and install the pii-tools Splunk app.
