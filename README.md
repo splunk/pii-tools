@@ -1,4 +1,8 @@
 # PII Tools
+
+## Download
+Latest version: https://github.com/splunk/pii-tools/releases/download/v0.0.1/pii_tools-0.0.1.tar.gz
+
 ## What is this
 Splunk App which provides tools to detect and handle PII.
 
